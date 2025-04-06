@@ -3,8 +3,11 @@ This is the repository to accompany our publication, "Emergence of novel SARS-Co
 
 
 ## Dependencies
-
-
+- mafft
+- biopython
+- numpy
+- seaborn
+- iqtree
 
 ## Usage
 ### Install dependencies using Conda
@@ -15,7 +18,7 @@ conda env create -f environment.yml
 ```
 3. Activate the environment:
 ```bash
-source activate sarscov2-variants
+source activate sarscov2
 ```
 
 ### Data retrieval and preprocessing, and multiple sequence alignment
@@ -30,4 +33,16 @@ mafft --retree 1 --thread 4 sarscov2_seq.fasta > sarscov2_mafft_aln.fasta
 
 ### SARS-CoV-2 descriptive statistics
 1. To generate the figures that describe the total SARS-CoV-2 population as well as the distribution of clades, run the python script `plot-descriptive.py` 
+```bash
+python plot-descriptive.py data/sarscov2_metadata.tsv -o img
+```
 
+2. Plot mutation frequencies
+```bash
+python plot-mutationfreq.py data/sarscov2_metadata.tsv data/sarscov2_mutations_coronapp.tsv -o img
+```
+
+3. Plot the locations of mutations on the S and N protein sequences, respectively usind the script `plot-sn-mutations.py`. In addition to the metadata file and the coronapp mutations, you need the S protein sequence in your `data` folder as `data/s-prot_nuc.fasta` and the mutation annotations in a tabular file as `data/mutations_annotated.tsv`
+```bash
+python plot-sn-mutations.py data/sarscov2_metadata.tsv data/sarscov2_mutations_coronapp.tsv -o img
+```

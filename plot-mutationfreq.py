@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 """
-This script generates the figures 3 and 4 from our publication
+This script generates the figure 3 from our publication
 It needs to location of SARS-CoV-2 metadata file, mutation file (obtained from coronapp)
 and the output directory for images
 """
 import os
 import argparse
+import warnings
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from datetime import datetime
+from pathlib import Path
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot mutation frequencies of SARS-CoV-2 genomes in the Netherlands over time"
-                                     "and the locations of these mutaitons on the genomedescriptive statistics of the total "
+    parser = argparse.ArgumentParser(description="Plot mutation frequencies of SARS-CoV-2 genomes in the Netherlands "
+                                     "over time and the locations of these mutaitons on the S and N protein sequences"
                                      "SARS-CoV-2 population and the individual clades")
     parser.add_argument("metadata", help="SARS-CoV-2 metadata file")
     parser.add_argument('mutation_file', help="SARS-CoV-2 mutations from coronapp")
@@ -23,15 +23,19 @@ def main():
                         help="Output directory to save the images.")
 
     args = parser.parse_args()
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = args.output_dir
+    metadata_file = args.metadata
+    mutation_file = args.mutation_file
+    os.makedirs(output_dir, exist_ok=True)
 
     # Load metadata file describing each SARS-CoV-2 genome
-    metadf = pd.read_csv(metadata, index_col=0, header=0, sep='\t')
+    metadf = pd.read_csv(metadata_file, index_col=0, header=0, sep='\t')
     mutdf = pd.read_csv(mutation_file, sep='\t', index_col=0, header=0)
 
     plt.style.use('seaborn-muted')
-
-    # Figure 3    
+    warnings.simplefilter(action='ignore') 
+    # Figure 3   
+    print("Plotting Figure 3")
     cmap = {'green': '#66c2a5', 'orange': '#fc8d62', 'blue': '#8da0cb'}
     metadf.loc[:,'acc'] = metadf.index # To keep the accesion IDs as a separate column
     # We plot only the samples that have the full date available
@@ -101,4 +105,5 @@ def main():
     plt.savefig(os.path.join(output_dir, 'fig3.png'), dpi=600, format='png')
     plt.savefig(os.path.join(output_dir, 'fig3.pdf'), dpi=600, format='pdf')
 
-
+if __name__ == "__main__":
+    main()

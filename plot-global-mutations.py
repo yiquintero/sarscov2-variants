@@ -6,38 +6,45 @@ and the output directory for images
 """
 import os
 import argparse
+import warnings
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from datetime import datetime
+from pathlib import Path
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot the total frequency (% of genomes) of the top 15 mutations in the"
-                                                 " most-sampled countries in our dataset")
+    parser = argparse.ArgumentParser(description="Plot the total frequency (\% of genomes) of the top 15 mutations in the"
+                                                 " most-sampled countries in our dataset and how the freuqencies of these"
+                                                 " mutations change over time")
     parser.add_argument("metadata", help="SARS-CoV-2 metadata file")
     parser.add_argument('mutation_file', help="SARS-CoV-2 mutations from coronapp")
     parser.add_argument('-o', '--output-dir', type=Path, required=True,
                         help="Output directory to save the images.")
     args = parser.parse_args()
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    output_dir = args.output_dir
+    metadata_file = args.metadata
+    mutation_file = args.mutation_file
+    os.makedirs(output_dir, exist_ok=True)
 
     # Load metadata file describing each SARS-CoV-2 genome
-    metadf = pd.read_csv(metadata, index_col=0, header=0, sep='\t')
+    metadf = pd.read_csv(metadata_file, index_col=0, header=0, sep='\t')
     mutdf = pd.read_csv(mutation_file, sep='\t', index_col=0, header=0)
 
     # Define which countries to plot the variants for
     countries = ['Netherlands', 'UK', 'USA', 'Australia', 'Canada', 'India', 'Spain', 'China']
     variant2color = {'Shared': '#4978d0', 'Non-unique non-common': 'gray', 'Unique': '#d66060'}
+    nlargest = 15
     # We plot only the samples that have the full date available
     idx_all = metadf[metadf.date.apply(lambda x: len(x)==10)].index.intersection(set(mutdf.index))
-    all_variants = [sorted(mutdf.loc[metadf.loc[idx_all][metadf.loc[idx_all].country==c].index].groupby('varname').count().refpos.nlargest(15).index)
+    all_variants = [sorted(mutdf.loc[metadf.loc[idx_all][metadf.loc[idx_all].country==c].index].groupby('varname').count().refpos.nlargest(nlargest).index)
                     for c in countries]
     uniq_variants, variant_counts = np.unique(np.array(all_variants), return_counts=True)
     variant_count_dict = dict(zip(uniq_variants, variant_counts))
     
     # Figure 5
+    warnings.simplefilter(action='ignore')
+    print("Plotting Figure 5")
     fig, ax = plt.subplots(2, 4, figsize=(12, 8))
     for xy,country in zip(sum(ax.tolist(),[]),countries):
         idx_country = metadf.loc[idx_all][metadf.loc[idx_all].country==country].index

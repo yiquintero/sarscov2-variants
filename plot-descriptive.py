@@ -5,26 +5,32 @@ It needs to location of SARS-CoV-2 metadata file and the output directory for im
 """
 import os
 import argparse
+import warnings
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from datetime import datetime
+from pathlib import Path
 
 def main():
-    parser = argparse.ArgumentParser(description="Plot descriptive statistics of the total SARS-CoV-2 population and the individual clades)
+    parser = argparse.ArgumentParser(description="Plot descriptive statistics of "
+                                     "the total SARS-CoV-2 population and the individual clades")
     parser.add_argument("metadata", help="SARS-CoV-2 metadata file")
     parser.add_argument('-o', '--output-dir', type=Path, required=True,
                         help="Output directory to save the images.")
 
     args = parser.parse_args()
-    args.output_dir.mkdir(parents=True, exist_ok=True)
+    metadata_file = args.metadata
+    output_dir = args.output_dir
+    os.makedirs(output_dir, exist_ok=True)
 
     # Load metadata file describing each SARS-CoV-2 genome
-    metadf = pd.read_csv(metadata, index_col=0, header=0, sep='\t')
+    metadf = pd.read_csv(metadata_file, index_col=0, header=0, sep='\t')
 
     # Figure 1
-    sns.set(style="whitegrid", palette="muted", color_codes=True)
+    print("Plotting Figure 1")
+    warnings.simplefilter(action='ignore')
+    sns.set_theme(style="whitegrid", palette="muted", color_codes=True)
     fig = plt.figure(figsize=(12, 6))
     # Figure 1A
     ax1 = fig.add_subplot(1, 2, 1)
@@ -35,7 +41,7 @@ def main():
     ax1.grid('on')
 
     # Figure 1B
-    ax2 = fig.add_subplot(1,2,2)
+    ax2 = fig.add_subplot(1, 2, 2)
     new_metadf = metadf.copy()
     # Cleaning the "date" field in metadata file plot correctly
     new_metadf.loc[:, 'date'] = new_metadf['date-fixed'].apply(lambda x: '-'.join(x.split('-')[:2]))
@@ -67,15 +73,20 @@ def main():
     plt.savefig(os.path.join(output_dir, "fig1.pdf"), dpi=600, format='pdf')
 
     # Figure 2
+    print("Plotting Figure 2")
     plt.style.use('seaborn-muted')
     clean_metadf = metadf[metadf.date.apply(lambda x: len(x)==10)]
     clean_metadf = clean_metadf[['country','date-fixed', 'recName','region','clade','lineage',
                                  'age','subloc','timestmp','numDupes','gender',
                                  'gisaid-clade','comp-clade','LS-clade']]
+    # Set moving window size to 7 days = 1 week 
+    w = 7 
+    # Cleaning the dates axis to plot prettier
     dates_axis = sorted(clean_metadf['date-fixed'].unique())
-    clade2color = {'L': '#4978d0', 'S': '#ee854b', 'G': '#6acc65', 'GR': '#956bb3', \
+    dates_axis_ticklabel = dates_axis[w-1::7]
+    dates_axis_ticklabel[0] = '2020-01-08'
+    clade2color = {'L': '#4978d0', 'S': '#ee854b', 'G': '#6acc65', 'GR': '#956bb3',
                   'GH': '#dd7ec0', 'V': '#d5bb67'}
-    w = 7 # Set moving window size to 7 days = 1 week 
     countries = ['Netherlands', 'UK', 'Australia', 'Singapore', 'China']
     fig, ax = plt.subplots(5, 1, figsize=(12, 32))
     
@@ -95,13 +106,18 @@ def main():
         ax[i].grid('y', alpha=.5)
         ax[i].stackplot(dates_axis[w-1:], ma_clade_sum[:, w-1:], colors=colors, labels=clades)
         ax[i].set_ylabel("% of genomes", fontsize=12)
-        ax[i].xaxis.set_ticks([]); ax[i].xaxis.set_tick_params(grid_alpha=0)
+        ax[i].xaxis.set_ticks([])
+        ax[i].xaxis.set_tick_params(grid_alpha=0)
         ax[i].set_xlim([dates_axis[w-1::7][0], dates_axis[w-1::7][-1]])
         ax[i].set_ylim([0, 100])
         ax[i].set_title(country)
 
+    ax[i].xaxis.set_ticks(dates_axis[w-1::7])
+    ax[i].xaxis.set_ticklabels(dates_axis_ticklabel)
+    ax[i].xaxis.set_tick_params(labelrotation=90, grid_alpha=0)
     ax[i].legend(clades, loc='upper right')
     plt.tight_layout()
+
     plt.savefig(os.path.join(output_dir, "fig2.png"), dpi=600, format='png')
     plt.savefig(os.path.join(output_dir, "fig2.pdf"), dpi=600, format='pdf')
     
