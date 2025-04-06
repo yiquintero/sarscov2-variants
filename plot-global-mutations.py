@@ -150,3 +150,6 @@ def main():
     plt.tight_layout()
     plt.savefig(os.path.join(output_dir, 'fig6.png'), dpi=600, format='png')
     plt.savefig(os.path.join(output_dir, 'fig6.pdf'), dpi=600, format='pdf')
+
+if __name__ == "__main__":
+    main()
