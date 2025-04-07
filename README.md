@@ -34,10 +34,21 @@ At the start, you should have all the files below under the same `data` folder:
 - `s-prot_nuc.fasta`: The nucleotide sequence of the S protein in fasta format.
 
 
-1. All sequences were aligned against the Wuhan-Hu-1 reference using MAFFT (v7.46) with the FFT-NS-fragment option, and the alignment was filtered to remove identical sequences to obtain 24,365 non-redundant genomes.
+1. Align all sequences against the Wuhan-Hu-1 reference using MAFFT (v7.46) with the FFT-NS-fragment option
 ```bash
-mafft --retree 1 --thread 4 sarscov2_seq.fasta > sarscov2_mafft_aln.fasta
+mafft --retree 1 --thread 4 data/sarscov2_seq.fasta > output/sarscov2_mafft_aln.fasta
 ```
+- We recommend submitting the `mafft` alignment as a job to a HPC, you can find an example script for SLURM jobs in `scripts/run-mafft.sh`
+2. Filter the alignment to remove gaps and identical sequences to obtain 24,365 non-redundant genomes using `scripts/alignment_utils.py`. This will produce an output file titled `output/sarscov2_mafft_aln_refined_trimmed.fasta`
+```bash
+python scripts/alignment_utils.py output/sarscov2_mafft_aln.fasta
+```
+3. Generate a phylogenetic tree using IQTREE To generate a tree, use IQTREE (v2.05) with GTR model, allowing to collapse non-zero branches, and ultrafast bootstrap with 1000 replicates:
+```bash
+iqtree -czb -m GTR -nt AUTO -ntmax 4 -pre output/iqtree-tree_collapsed -s output/sarscov2_mafft_aln_refined_trimmed.fasta -seed 1 -v
+```
+4. Finally, you can use [iTOL](https://itol.embl.de/) to draw the phylogenetic tree.
+
 
 ### Plotting the results from variant analysis
 1. To generate Figures 1 and 2 from our publication use the python script `plot-descriptive.py`: these figures describe the total SARS-CoV-2 population per continent as well as the distribution of clades over time in the Netherlands, the UK, Australia, Singapore and China.
