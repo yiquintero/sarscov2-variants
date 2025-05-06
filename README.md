@@ -1,4 +1,11 @@
-# Emergence of novel SARS-CoV-2 variants in the Netherlands
+# CODECHECK repository
+
+This is the CODECHECK repository for the publication: **[Emergence of novel SARS-CoV-2 variants in the Netherlands](https://doi.org/10.1038/s41598-021-85363-7)**. It is forked from author's repository associated with the publication.
+
+The reproduced figures can be found in the [codecheck/outputs](codecheck/outputs) directory.
+
+## Emergence of novel SARS-CoV-2 variants in the Netherlands
+
 This is the repository to accompany our publication, "Emergence of novel SARS-CoV-2 variants in the Netherlands" in *Scientific Reports*. In this repository, you can find the scripts we used to conduct a study of SARS-CoV-2 genomes to explore the viral population diversity in the Netherlands, within a global context. Our work lends insight into the genetic variation of SARS-CoV-2 in the later stages of the pandemic in April and early May.
 
 ## Dependencies
