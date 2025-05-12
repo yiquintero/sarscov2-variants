@@ -1,3 +1,5 @@
+#Ignore fasta files
+*.fasta
 # Ignore pdf outputs
 *.pdf
 
