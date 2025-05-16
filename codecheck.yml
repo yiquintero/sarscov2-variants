@@ -1,0 +1,43 @@
+---
+version: https://codecheck.org.uk/spec/config/1.0
+
+paper:
+  title: "Emergence of novel SARS-CoV-2 variants in the Netherlands"
+  authors:
+    - name: Aysun Urhan
+      ORCID: 0000-0001-8584-4736
+    - name: Thomas Abeel
+      ORCID: 0000-0002-7205-7431
+  reference: https://doi.org/10.1038/s41598-021-85363-7
+
+manifest:
+  - file: fig_1_Distribution-of-SARS-CoV-2-genomes-across-five-continents.png
+    comment: manuscript Figure 1
+  - file: fig_2_Distribution-of-SARS-CoV-2-clades-in-a-selection-among-the-12-most-sampled-countries.png
+    comment: manuscript Figure 2
+  - file: fig_3_Number-of-mutations-per-sample-per-day-over-the-course-of-pandemic-in-the-Netherlands.png
+    comment: manuscript Figure 3
+  - file: fig_4_Total-number-of-nucleotide-mutations.png
+    comment: manuscript Figure 4
+  - file: fig_5_Total-frequency-of-the-top-15-mutations-in-the-most-sampled-countries-in-our-dataset.png
+    comment: manuscript Figure 5
+  - file: fig_6_Change-in-frequency-of-the-top-15-mutations-in-the-most-sampled-countries-in-our-dataset.png
+    comment: manuscript Figure 6
+  - file: fig_7_Change-in-frequency-of-the-top-15-mutations-in-the-Netherlands.png
+    comment: manuscript Figure 7
+
+
+codechecker:
+  - name: Elviss Dvinskis
+    ORCID: 0000-0003-2873-0139
+  - name: Leila Iñigo de la Cruz
+    ORCID: 0000-0003-0852-9219
+  - name: Yasel Quintero
+    ORCID: 0009-0005-9240-7370
+
+summary: >
+  Partial reproduction.
+repository: https://github.com/codecheckers/sarscov2-variants
+check_time: "2025-05-01 14:00:00"
+certificate: 2025-006
+report: 
