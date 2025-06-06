@@ -36,8 +36,10 @@ codechecker:
     ORCID: 0009-0005-9240-7370
 
 summary: >
-  Partial reproduction.
+  This project provides clear instructions on generating figures 1 – 9, described in the README.md document located in the GitHub repository linked to the publication.
+  However, to run figures 8 and 9, the author recommends the use of an HPC cluster, which is beyond the scope of this CODECHECK.
+  Figures 1 – 7 could be reproduced on certain systems and configurations.
 repository: https://github.com/codecheckers/sarscov2-variants
 check_time: "2025-05-01 14:00:00"
 certificate: 2025-006
-report: 
+report: https://doi.org/10.5281/zenodo.15520471
